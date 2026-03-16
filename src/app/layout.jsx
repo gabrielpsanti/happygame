@@ -26,10 +26,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body className="min-h-screen flex">
-
+        <a href="#conteudo-principal" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-principal text-black px-3 py-2 rounded">Pular para o conteúdo principal</a>
+        
         <Nav />
 
-        <main className="flex-1 p-6 pr-44">
+        <main id="conteudo-principal" className="flex-1 p-6 pr-44">
           <header className="bg-principal px-6 py-4 rounded-lg text-center text-xl font-semibold mb-8">
             Happy Game
           </header>

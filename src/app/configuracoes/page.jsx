@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Head from 'next/head';
 
 export default function Configuracoes() {
     const [nome, setNome] = useState("");
@@ -32,21 +33,22 @@ export default function Configuracoes() {
     }
 
     return (
+    <>
+    <Head><title>Configurações | HappyGame</title></Head>
+    <h1 className="text-2xl md:text-3xl font-bold mb-6 text-principal">⚙️ Configurações da Conta</h1>
     <div className="bg-card max-w-xl mx-auto p-8 rounded-2xl border border-principal shadow-2xl">
 
-        <h2 className="text-2xl font-bold mb-6 text-principal">
-        ⚙️ Configurações da Conta
-        </h2>
-
-        <label className="block mb-2">Nome:</label>
+        <label htmlFor="nome" className="block mb-2">Nome:</label>
         <input
+        id="nome"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
         className="w-full p-3 rounded bg-[#1e1e1e] border border-principal mb-5"
         />
 
-        <label className="block mb-2">Tema do site:</label>
+        <label htmlFor="tema" className="block mb-2">Tema do site:</label>
         <select
+        id="tema"
         value={tema}
         onChange={(e) => setTema(e.target.value)}
         className="w-full p-3 rounded bg-[#1e1e1e] border border-principal mb-6"
@@ -73,5 +75,6 @@ export default function Configuracoes() {
         </div>
 
     </div>
+    </>
     );
 }
