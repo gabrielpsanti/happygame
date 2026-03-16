@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Head from 'next/head';
 
 export default function Eventos() {
     const [nome, setNome] = useState("");
@@ -43,14 +44,18 @@ export default function Eventos() {
     }
 
     return (
+    <>
+    <Head><title>Eventos | HappyGame</title></Head>
     <div className="max-w-3xl mx-auto">
-
+        <h1 className="text-3xl font-bold mb-6">Eventos</h1>
         <div className="bg-card p-6 rounded-xl border border-principal mb-8">
         <h2 className="text-2xl font-bold mb-4 text-principal">
             Criar Evento
         </h2>
 
+        <label htmlFor="nome-evento" className="block mb-2">Nome do evento</label>
         <input
+            id="nome-evento"
             type="text"
             placeholder="Nome do evento"
             value={nome}
@@ -58,14 +63,18 @@ export default function Eventos() {
             className="w-full mb-3 p-3 rounded bg-[#1e1e1e] border border-principal"
         />
 
+        <label htmlFor="data-evento" className="block mb-2">Data</label>
         <input
+            id="data-evento"
             type="date"
             value={data}
             onChange={(e) => setData(e.target.value)}
             className="w-full mb-3 p-3 rounded bg-[#1e1e1e] border border-principal"
         />
 
+        <label htmlFor="hora-evento" className="block mb-2">Hora</label>
         <input
+            id="hora-evento"
             type="time"
             value={hora}
             onChange={(e) => setHora(e.target.value)}
@@ -104,5 +113,6 @@ export default function Eventos() {
         </div>
 
     </div>
+    </>
     );
 }

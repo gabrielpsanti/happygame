@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Head from 'next/head';
 
 export default function Feed() {
     const [posts, setPosts] = useState([]);
@@ -56,11 +57,16 @@ export default function Feed() {
     }
 
     return (
+    <>
+    <Head><title>Feed | HappyGame</title></Head>
     <main className="space-y-6">
+      <h1 className="text-3xl font-bold mb-4">Feed</h1>
 
       {/* CRIAR POST */}
         <section className="bg-card p-6 rounded-lg border-l-4 border-principal">
+        <label htmlFor="novo-post" className="sr-only">O que você está jogando hoje?</label>
         <textarea
+            id="novo-post"
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
             className="w-full p-3 bg-[#1e1e1e] rounded mb-3"
@@ -79,6 +85,7 @@ export default function Feed() {
         {posts.map((post, i) => (
         <Post
             key={i}
+            index={i}
             post={post}
             onCurtir={() => curtir(i)}
             onRepostar={() => repostar(i)}
@@ -87,10 +94,11 @@ export default function Feed() {
         />
         ))}
     </main>
+    </>
     );
 }
 
-function Post({ post, onCurtir, onRepostar, onApagar, onComentar }) {
+function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
     const [comentario, setComentario] = useState("");
 
     return (
@@ -100,9 +108,9 @@ function Post({ post, onCurtir, onRepostar, onApagar, onComentar }) {
 
       {/* AÇÕES */}
         <div className="flex justify-around text-xl">
-        <button onClick={onCurtir}>❤️ {post.curtidas}</button>
-        <button onClick={onRepostar}>🔁 {post.reposts}</button>
-        <button onClick={onApagar} className="text-red-400">🗑️</button>
+        <button onClick={onCurtir} aria-label={`Curtir. Curtidas: ${post.curtidas}`}>❤️ <span aria-hidden>{post.curtidas}</span></button>
+        <button onClick={onRepostar} aria-label={`Repostar. Reposts: ${post.reposts}`}>🔁 <span aria-hidden>{post.reposts}</span></button>
+        <button onClick={onApagar} className="text-red-400" aria-label="Apagar post">🗑️</button>
         </div>
 
       {/* COMENTÁRIOS */}
@@ -114,7 +122,9 @@ function Post({ post, onCurtir, onRepostar, onApagar, onComentar }) {
         ))}
 
         <div className="flex gap-2">
+            <label htmlFor={`comentario-${index}`} className="sr-only">Adicionar comentário</label>
             <input
+            id={`comentario-${index}`}
             value={comentario}
             onChange={(e) => setComentario(e.target.value)}
             className="flex-1 p-1 rounded bg-[#1e1e1e]"
@@ -126,6 +136,7 @@ function Post({ post, onCurtir, onRepostar, onApagar, onComentar }) {
                 setComentario("");
             }}
             className="bg-principal px-3 rounded"
+            aria-label="Enviar comentário"
             >
             💬
             </button>

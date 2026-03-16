@@ -1,10 +1,15 @@
+"use client";
+import Head from 'next/head';
+
 export default function SaibaMais() {
   return (
+    <>
+    <Head><title>Saiba Mais | HappyGame</title></Head>
     <div className="bg-card p-8 rounded-xl border border-principal max-w-3xl mx-auto shadow-xl">
 
-        <h2 className="text-3xl font-bold mb-4 text-principal">
+        <h1 className="text-3xl font-bold mb-4 text-principal">
         Sobre o HappyGame
-        </h2>
+        </h1>
 
         <p className="mb-4 text-gray-300">O HappyGame nasceu da junção entre um projeto de faculdade e pela vontade de criar algo novo. Assim, reunindo paixão pelos jogos e conexão entre pessoas que enxergam nos games mais do que diversão — uma forma de expressão, amizade e comunidade - criamos este ambiente para você se divertir.</p>
 
@@ -29,5 +34,6 @@ export default function SaibaMais() {
     
 
     </div>
+    </>
     );
 }

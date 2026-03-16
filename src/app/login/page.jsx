@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Head from 'next/head';
 
 export default function Login() {
     const [nome, setNome] = useState("");
@@ -14,13 +15,17 @@ export default function Login() {
     }
 
     return (
+    <>
+    <Head><title>Login | HappyGame</title></Head>
     <div className="max-w-md mx-auto bg-card p-8 rounded-xl border border-principal shadow-xl mt-20">
 
-        <h2 className="text-2xl font-bold mb-6 text-center text-principal">
+        <h1 className="text-2xl font-bold mb-6 text-center text-principal">
         Login
-        </h2>
+        </h1>
 
+        <label htmlFor="nome" className="block mb-2">Nome</label>
         <input
+        id="nome"
         type="text"
         placeholder="Digite seu nome"
         value={nome}
@@ -36,5 +41,6 @@ export default function Login() {
         </button>
 
     </div>
+    </>
     );
 }

@@ -8,7 +8,8 @@ const Inicio = () => {
     <div className="relative h-screen"> 
       <Image
         src={Fundo}
-        alt="Descrição da imagem"
+        alt=""
+        aria-hidden="true"
         layout="fill"
         objectFit="cover"
         className="absolute inset-0"

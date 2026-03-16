@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
+import Head from 'next/head';
 import {
     Chart as ChartJS,
     LineElement,
@@ -99,8 +100,17 @@ export default function Dashboard() {
     };
 
     return (
-    <div className="bg-card p-6 rounded-xl w-[80%] mx-auto mt-10">
-        <Line data={data} options={options}/>
-    </div>
+    <>
+      <Head><title>Dashboards | HappyGame</title></Head>
+      <h1 className="text-3xl font-bold mb-6">Dashboards</h1>
+      <div className="bg-card p-6 rounded-xl w-[80%] mx-auto mt-10">
+        <figure>
+          <div role="img" aria-label="Gráfico de linha mostrando projeção de crescimento de usuários ao longo de seis meses">
+            <Line data={data} options={options} />
+          </div>
+          <figcaption className="sr-only">Gráfico ilustrando tendência de crescimento de usuários mês a mês.</figcaption>
+        </figure>
+      </div>
+    </>
     );
 }
