@@ -6,6 +6,9 @@ import Head from 'next/head';
 export default function Feed() {
     const [posts, setPosts] = useState([]);
     const [texto, setTexto] = useState("");
+    const [moderando, setModerando] = useState(false);
+    const [erroModeracao, setErroModeracao] = useState("");
+    const [avisoFalha, setAvisoFalha] = useState(false);
 
     useEffect(() => {
     const salvos = JSON.parse(localStorage.getItem("posts")) || [];
@@ -17,19 +20,69 @@ export default function Feed() {
     localStorage.setItem("posts", JSON.stringify(novos));
     }
 
-    function postar() {
+    async function postar() {
     if (!texto.trim()) return;
 
-    const novo = {
+    setModerando(true);
+    setErroModeracao("");
+
+    try {
+      const res = await fetch("/api/moderar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto })
+      });
+
+      const resultado = await res.json();
+
+      if (resultado.apiError) {
+        const novo = { texto, curtidas: 0, comentarios: [], reposts: 0 };
+        salvar([novo, ...posts]);
+        setTexto("");
+        setAvisoFalha(true);
+        setTimeout(() => setAvisoFalha(false), 4000);
+        setModerando(false);
+        return;
+      }
+
+      if (!resultado.aprovado) {
+        setErroModeracao(
+          `Post bloqueado pela IA: ${resultado.motivo}. ` +
+          `(Toxicidade: ${resultado.scores.TOXICITY}%)`
+        );
+        setModerando(false);
+        return;
+      }
+
+      const novo = {
         texto,
         curtidas: 0,
         comentarios: [],
         reposts: 0,
-    };
+        moderado: true,
+        scores: resultado.scores
+      };
 
-    const novos = [novo, ...posts];
-    salvar(novos);
-    setTexto("");
+      const novos = [novo, ...posts];
+      salvar(novos);
+      setTexto("");
+
+    } catch (error) {
+      console.error("Erro na moderação:", error);
+      const novo = {
+        texto,
+        curtidas: 0,
+        comentarios: [],
+        reposts: 0,
+      };
+      const novos = [novo, ...posts];
+      salvar(novos);
+      setTexto("");
+      setAvisoFalha(true);
+      setTimeout(() => setAvisoFalha(false), 4000);
+    }
+
+    setModerando(false);
     }
 
     function apagar(index) {
@@ -62,6 +115,12 @@ export default function Feed() {
     <main className="space-y-6">
       <h1 className="text-3xl font-bold mb-4">Feed</h1>
 
+      {avisoFalha && (
+        <div className="fixed top-4 right-4 bg-yellow-900/80 border border-yellow-500 text-yellow-200 px-4 py-3 rounded-lg text-sm shadow-lg z-50">
+          ⚠️ Falha na validação da API. Conteúdo publicado.
+        </div>
+      )}
+
       {/* CRIAR POST */}
         <section className="bg-card p-6 rounded-lg border-l-4 border-principal">
         <label htmlFor="novo-post" className="sr-only">O que você está jogando hoje?</label>
@@ -73,11 +132,19 @@ export default function Feed() {
             placeholder="O que você está jogando hoje?"
         />
 
+        {erroModeracao && (
+          <div className="bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg mb-3 text-sm">
+            {erroModeracao}
+          </div>
+        )}
+
         <button
             onClick={postar}
-            className="bg-principal px-6 py-2 rounded font-bold hover:scale-105 transition"
+            disabled={moderando}
+            suppressHydrationWarning
+            className="bg-principal w-full py-3 rounded font-bold hover:scale-105 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
-            Postar
+            {moderando ? "Analisando com IA..." : "Postar"}
         </button>
         </section>
 
@@ -108,9 +175,9 @@ function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
 
       {/* AÇÕES */}
         <div className="flex justify-around text-xl">
-        <button onClick={onCurtir} aria-label={`Curtir. Curtidas: ${post.curtidas}`}>❤️ <span aria-hidden>{post.curtidas}</span></button>
-        <button onClick={onRepostar} aria-label={`Repostar. Reposts: ${post.reposts}`}>🔁 <span aria-hidden>{post.reposts}</span></button>
-        <button onClick={onApagar} className="text-red-400" aria-label="Apagar post">🗑️</button>
+        <button onClick={onCurtir} className="cursor-pointer" aria-label={`Curtir. Curtidas: ${post.curtidas}`}>❤️ <span aria-hidden>{post.curtidas}</span></button>
+        <button onClick={onRepostar} className="cursor-pointer" aria-label={`Repostar. Reposts: ${post.reposts}`}>🔁 <span aria-hidden>{post.reposts}</span></button>
+        <button onClick={onApagar} className="text-red-400 cursor-pointer" aria-label="Apagar post">🗑️</button>
         </div>
 
       {/* COMENTÁRIOS */}
@@ -135,7 +202,7 @@ function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
                 onComentar(comentario);
                 setComentario("");
             }}
-            className="bg-principal px-3 rounded"
+            className="bg-principal px-3 rounded cursor-pointer"
             aria-label="Enviar comentário"
             >
             💬
