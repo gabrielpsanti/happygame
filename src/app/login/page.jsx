@@ -35,7 +35,7 @@ export default function Login() {
 
         <button
         onClick={entrar}
-        className="bg-principal w-full py-3 rounded font-bold hover:scale-105 transition"
+        className="bg-principal w-full py-3 rounded font-bold hover:scale-105 transition cursor-pointer"
         >
         Entrar
         </button>

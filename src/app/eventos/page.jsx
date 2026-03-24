@@ -83,7 +83,7 @@ export default function Eventos() {
 
         <button
             onClick={criarEvento}
-            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition"
+            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition cursor-pointer"
         >
             Criar Evento
         </button>
@@ -104,7 +104,7 @@ export default function Eventos() {
 
             <button
                 onClick={() => apagarEvento(evento.id)}
-                    className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition"
+                    className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition cursor-pointer"
             >
                 Apagar
             </button>

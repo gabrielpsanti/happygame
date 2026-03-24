@@ -61,14 +61,14 @@ export default function Configuracoes() {
         <div className="flex gap-4">
         <button
             onClick={salvar}
-            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition"
+            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition cursor-pointer"
         >
             Salvar Alterações
         </button>
 
         <button
             onClick={sair}
-            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition"
+            className="bg-principal px-6 py-3 rounded font-bold hover:scale-105 transition cursor-pointer"
         >
             Sair da Conta
         </button>
