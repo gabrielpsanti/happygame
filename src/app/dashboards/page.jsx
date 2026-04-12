@@ -13,6 +13,9 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
+import { generateUsers } from "../utils/predictions";
+import { linearTrend } from "../utils/trend";
+
 ChartJS.register(
     LineElement,
     PointElement,
@@ -30,6 +33,8 @@ export default function Dashboard() {
     secundaria: "#ff9ad3"
     });
 
+    const [chartData, setChartData] = useState(null);
+
     function atualizarCores() {
     const styles = getComputedStyle(document.documentElement);
 
@@ -39,68 +44,87 @@ export default function Dashboard() {
     });
     }
 
-    useEffect(() => {
-
-    atualizarCores();
-
-    // observa mudanças no HTML (ex: troca de tema)
-    const observer = new MutationObserver(() => {
+        useEffect(() => {
         atualizarCores();
-    });
 
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["style", "class"]
-    });
+        const observer = new MutationObserver(() => {
+            atualizarCores();
+        });
 
-    return () => observer.disconnect();
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["style", "class"]
+        });
 
+        const rawData = generateUsers(6);
+        const dataComTrend = linearTrend(rawData);
+        setChartData(dataComTrend);
+
+        return () => observer.disconnect();
     }, []);
 
-    const meses = [0,1,2,3,4,5];
-  const usuarios = meses.map(t => Math.round(100 * Math.pow(1.2, t)));
+    if (!chartData) return null;
+
+    const labels = chartData.map(item => item.mes);
+    const usuarios = chartData.map(item => item.usuarios);
+    const tendencia = chartData.map(item => item.tendencia);
+
+    const crescimento =
+    ((usuarios[usuarios.length - 1] - usuarios[0]) / usuarios[0]) * 100;
 
     const data = {
-    labels: meses.map(m => `Mês ${m}`),
+    labels: labels,
     datasets: [
         {
-        label: "Crescimento de Usuários",
+        label: "Previsão de Usuários",
         data: usuarios,
         borderColor: cores.principal,
         backgroundColor: cores.secundaria,
         pointBackgroundColor: cores.principal,
-        pointBorderColor: cores.principal,
         tension: 0.4,
         fill: true
+        },
+        {
+        label: "Linha de Tendência",
+        data: tendencia,
+        borderColor: "#00ffcc",
+        borderDash: [5, 5],
+        tension: 0.4
         }
     ]
     };
 
     const options = {
-        responsive: true,
-        plugins: {
+    responsive: true,
+    plugins: {
         legend: {
-            labels: { color: "white" }
+        labels: { color: "white" }
         },
         title: {
-            display: true,
-            text: "Projeção de Crescimento de Usuários",
-            color: "white"
+        display: true,
+        text: "Análise Preditiva de Crescimento de Usuários",
+        color: "white"
         }
-        },
-        scales: {
+    },
+    scales: {
         x: {
-            ticks: { color: "white" }
+        ticks: { color: "white" }
         },
         y: {
-            ticks: { color: "white" }
+        ticks: { color: "white" }
         }
-        }
+    }
     };
 
     return (
     <div className="bg-card p-6 rounded-xl w-[80%] mx-auto mt-10">
-        <Line data={data} options={options}/>
+
+        <p className="text-white mb-4 text-lg">
+        Crescimento previsto: {crescimento.toFixed(2)}%
+        </p>
+
+        <Line data={data} options={options} />
+
     </div>
     );
 }
