@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Head from 'next/head'
 
 export default function Jogos() {
   const [jogos, setJogos] = useState([])
@@ -16,7 +17,9 @@ export default function Jogos() {
   }, [])
 
   return (
-    <div className="p-6">
+    <>
+      <Head><title>Jogos | HappyGame</title></Head>
+      <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-center">
         🎮 Jogos em Destaque
       </h1>
@@ -43,5 +46,6 @@ export default function Jogos() {
         ))}
       </div>
     </div>
+    </>
   )
 }
