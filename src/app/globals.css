@@ -27,3 +27,41 @@ body {
 .border-principal {
     border-color: var(--cor-principal);
 }
+
+/* B1 — Alto contraste: muda fundo mas mantém a cor do tema ativo */
+[data-tema="alto-contraste"] {
+    --cor-fundo: #000000;
+    --cor-card: #111111;
+}
+
+[data-tema="alto-contraste"] body {
+    color: #ffffff;
+}
+
+/* B2 — Tamanho de fonte */
+html[data-fonte="pequena"] { font-size: 0.875rem; }
+html[data-fonte="normal"]  { font-size: 1rem; }
+html[data-fonte="grande"]  { font-size: 1.25rem; }
+
+/* B4 — Foco visível para navegação por teclado */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 3px solid var(--cor-principal);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* B5 — Respeita preferência de redução de movimento do sistema */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
