@@ -10,17 +10,20 @@ export default function RootLayout({ children }) {
   useEffect(() => {
     const tema = localStorage.getItem("tema") || "rosa";
 
-    if (tema === "rosa") {
-      document.documentElement.style.setProperty("--cor-principal", "#ff66b2");
+    if (tema === "rosa") document.documentElement.style.setProperty("--cor-principal", "#ff66b2");
+    if (tema === "azul") document.documentElement.style.setProperty("--cor-principal", "#3b82f6");
+    if (tema === "verde") document.documentElement.style.setProperty("--cor-principal", "#22c55e");
+
+    const altoContraste = localStorage.getItem("alto-contraste") === "true";
+    if (altoContraste) {
+      document.documentElement.setAttribute("data-tema", "alto-contraste");
+    } else {
+      document.documentElement.removeAttribute("data-tema");
     }
 
-    if (tema === "azul") {
-      document.documentElement.style.setProperty("--cor-principal", "#3b82f6");
-    }
-
-    if (tema === "verde") {
-      document.documentElement.style.setProperty("--cor-principal", "#22c55e");
-    }
+    // B2 — restaura tamanho de fonte
+    const fonte = localStorage.getItem("fonte") || "normal";
+    document.documentElement.setAttribute("data-fonte", fonte);
   }, []);
 
   return (
