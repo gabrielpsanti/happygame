@@ -5,11 +5,22 @@
     --cor-secundaria: #ff9ad3;
     --cor-fundo: #1e1e1e;
     --cor-card: #2a2a2a;
+    /* Superfícies/textos derivados — permitem trocar de tema só mexendo aqui */
+    --cor-input: #1e1e1e;
+    --cor-card-hover: #333333;
+    --cor-texto: #ffffff;
+    --cor-texto-suave: #d1d5db;
+}
+
+html,
+body {
+    /* o menu mobile fica fora da tela (translate-x-full) quando fechado */
+    overflow-x: hidden;
 }
 
 body {
     background-color: var(--cor-fundo);
-    color: white;
+    color: var(--cor-texto);
 }
 
 .bg-principal {
@@ -18,6 +29,10 @@ body {
 
 .bg-card {
     background-color: var(--cor-card);
+}
+
+.bg-input {
+    background-color: var(--cor-input);
 }
 
 .text-principal {
@@ -32,10 +47,51 @@ body {
 [data-tema="alto-contraste"] {
     --cor-fundo: #000000;
     --cor-card: #111111;
+    --cor-input: #000000;
+    --cor-card-hover: #1a1a1a;
+    --cor-texto: #ffffff;
+    --cor-texto-suave: #ffffff;
 }
 
 [data-tema="alto-contraste"] body {
     color: #ffffff;
+}
+
+/* Fase 7 — Tema claro (light mode). Alto contraste tem prioridade sobre este. */
+[data-tema="claro"] {
+    --cor-fundo: #f3f4f6;
+    --cor-card: #ffffff;
+    --cor-input: #e5e7eb;
+    --cor-card-hover: #e5e7eb;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #4b5563;
+}
+
+[data-tema="claro"] body {
+    color: var(--cor-texto);
+}
+
+/* Normaliza textos com cor fixa para continuarem legíveis no tema claro */
+[data-tema="claro"] .text-white {
+    color: var(--cor-texto);
+}
+
+[data-tema="claro"] .text-gray-200,
+[data-tema="claro"] .text-gray-300,
+[data-tema="claro"] .text-gray-400 {
+    color: var(--cor-texto-suave);
+}
+
+/* Fase 7 — Spinner de carregamento (CSS puro, sem dependência) */
+@keyframes girar {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    border: 4px solid var(--cor-principal);
+    border-top-color: transparent;
+    border-radius: 9999px;
+    animation: girar 0.8s linear infinite;
 }
 
 /* B2 — Tamanho de fonte */

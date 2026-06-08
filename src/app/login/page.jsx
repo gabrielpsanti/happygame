@@ -3,13 +3,18 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Head from 'next/head';
+import { useToast } from "@/components/ToastProvider";
 
 export default function Login() {
     const [nome, setNome] = useState("");
     const router = useRouter();
+    const { addToast } = useToast();
 
     function entrar() {
-    if (!nome) return alert("Digite seu nome!");
+    if (!nome) {
+        addToast({ tipo: "erro", mensagem: "Digite seu nome!" });
+        return;
+    }
     localStorage.setItem("usuario", nome);
     router.push("/perfil");
     }
@@ -30,7 +35,7 @@ export default function Login() {
         placeholder="Digite seu nome"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
-        className="w-full p-3 rounded bg-[#1e1e1e] border border-principal mb-4"
+        className="w-full p-3 rounded bg-input border border-principal mb-4"
         />
 
         <button

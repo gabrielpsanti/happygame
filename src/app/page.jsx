@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Head from 'next/head';
+import { useToast } from "@/components/ToastProvider";
+import EmptyState from "@/components/EmptyState";
 
 export default function Feed() {
     const [posts, setPosts] = useState([]);
     const [texto, setTexto] = useState("");
     const [moderando, setModerando] = useState(false);
     const [erroModeracao, setErroModeracao] = useState("");
-    const [avisoFalha, setAvisoFalha] = useState(false);
+    const { addToast } = useToast();
 
     useEffect(() => {
     const salvos = JSON.parse(localStorage.getItem("posts")) || [];
@@ -39,8 +41,7 @@ export default function Feed() {
         const novo = { texto, curtidas: 0, comentarios: [], reposts: 0 };
         salvar([novo, ...posts]);
         setTexto("");
-        setAvisoFalha(true);
-        setTimeout(() => setAvisoFalha(false), 4000);
+        addToast({ tipo: "aviso", mensagem: "Falha na validação da API. Conteúdo publicado." });
         setModerando(false);
         return;
       }
@@ -66,6 +67,7 @@ export default function Feed() {
       const novos = [novo, ...posts];
       salvar(novos);
       setTexto("");
+      addToast({ tipo: "sucesso", mensagem: "Post publicado!" });
 
     } catch (error) {
       console.error("Erro na moderação:", error);
@@ -78,8 +80,7 @@ export default function Feed() {
       const novos = [novo, ...posts];
       salvar(novos);
       setTexto("");
-      setAvisoFalha(true);
-      setTimeout(() => setAvisoFalha(false), 4000);
+      addToast({ tipo: "aviso", mensagem: "Falha na validação da API. Conteúdo publicado." });
     }
 
     setModerando(false);
@@ -112,14 +113,8 @@ export default function Feed() {
     return (
     <>
     <Head><title>Feed | HappyGame</title></Head>
-    <main className="space-y-6">
-      <h1 className="text-3xl font-bold mb-4">Feed</h1>
-
-      {avisoFalha && (
-        <div className="fixed top-4 right-4 bg-yellow-900/80 border border-yellow-500 text-yellow-200 px-4 py-3 rounded-lg text-sm shadow-lg z-50">
-          ⚠️ Falha na validação da API. Conteúdo publicado.
-        </div>
-      )}
+    <section className="space-y-6">
+      <h1 className="text-2xl md:text-3xl font-bold mb-4">Feed</h1>
 
       {/* CRIAR POST */}
         <section className="bg-card p-6 rounded-lg border-l-4 border-principal">
@@ -128,7 +123,7 @@ export default function Feed() {
             id="novo-post"
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
-            className="w-full p-3 bg-[#1e1e1e] rounded mb-3"
+            className="w-full p-3 bg-input rounded mb-3"
             placeholder="O que você está jogando hoje?"
         />
 
@@ -149,18 +144,26 @@ export default function Feed() {
         </section>
 
       {/* LISTAGEM */}
-        {posts.map((post, i) => (
-        <Post
-            key={i}
-            index={i}
-            post={post}
-            onCurtir={() => curtir(i)}
-            onRepostar={() => repostar(i)}
-            onApagar={() => apagar(i)}
-            onComentar={(txt) => comentar(i, txt)}
-        />
-        ))}
-    </main>
+        {posts.length === 0 ? (
+          <EmptyState
+            icone="📝"
+            titulo="Nenhum post ainda"
+            mensagem="Seja o primeiro a compartilhar o que está jogando hoje!"
+          />
+        ) : (
+          posts.map((post, i) => (
+          <Post
+              key={i}
+              index={i}
+              post={post}
+              onCurtir={() => curtir(i)}
+              onRepostar={() => repostar(i)}
+              onApagar={() => apagar(i)}
+              onComentar={(txt) => comentar(i, txt)}
+          />
+          ))
+        )}
+    </section>
     </>
     );
 }
@@ -169,7 +172,7 @@ function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
     const [comentario, setComentario] = useState("");
 
     return (
-    <div className="bg-card p-5 rounded shadow space-y-3 relative hover:bg-[#333] transition">
+    <div className="bg-card p-5 rounded shadow space-y-3 relative hover:bg-[var(--cor-card-hover)] transition">
 
         <p>{post.texto}</p>
 
@@ -183,7 +186,7 @@ function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
       {/* COMENTÁRIOS */}
         <div className="space-y-2">
         {post.comentarios.map((c, i) => (
-            <div key={i} className="bg-[#1e1e1e] p-2 rounded text-sm">
+            <div key={i} className="bg-input p-2 rounded text-sm">
             {c}
             </div>
         ))}
@@ -194,7 +197,7 @@ function Post({ index, post, onCurtir, onRepostar, onApagar, onComentar }) {
             id={`comentario-${index}`}
             value={comentario}
             onChange={(e) => setComentario(e.target.value)}
-            className="flex-1 p-1 rounded bg-[#1e1e1e]"
+            className="flex-1 p-1 rounded bg-input"
             placeholder="Comentar..."
             />
             <button

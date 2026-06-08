@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Head from 'next/head';
+import { useToast } from "@/components/ToastProvider";
 
 export default function Configuracoes() {
     const [nome, setNome] = useState("");
     const [tema, setTema] = useState("rosa");
+    const [temaClaro, setTemaClaro] = useState(false);
+    const { addToast } = useToast();
 
     useEffect(() => {
         setNome(localStorage.getItem("usuario") || "");
         setTema(localStorage.getItem("tema") || "rosa");
+        setTemaClaro(localStorage.getItem("tema-claro") === "true");
     }, []);
 
     function aplicarTema(cor) {
@@ -19,10 +23,23 @@ export default function Configuracoes() {
     function salvar() {
         localStorage.setItem("usuario", nome);
         localStorage.setItem("tema", tema);
+        localStorage.setItem("tema-claro", temaClaro);
 
         if (tema === "rosa") aplicarTema("#ff66b2");
         if (tema === "azul") aplicarTema("#3b82f6");
         if (tema === "verde") aplicarTema("#22c55e");
+
+        // Aparência claro/escuro — alto contraste (Fase 6) tem prioridade
+        const contraste = localStorage.getItem("alto-contraste") === "true";
+        if (contraste) {
+            document.documentElement.setAttribute("data-tema", "alto-contraste");
+        } else if (temaClaro) {
+            document.documentElement.setAttribute("data-tema", "claro");
+        } else {
+            document.documentElement.removeAttribute("data-tema");
+        }
+
+        addToast({ tipo: "sucesso", mensagem: "Alterações salvas!" });
     }
 
     function sair() {
@@ -41,19 +58,30 @@ export default function Configuracoes() {
             id="nome"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="w-full p-3 rounded bg-[#1e1e1e] border border-principal mb-5"
+            className="w-full p-3 rounded bg-input border border-principal mb-5"
         />
 
-        <label htmlFor="tema" className="block mb-2">Tema do site:</label>
+        <label htmlFor="tema" className="block mb-2">Cor de destaque:</label>
         <select
             id="tema"
             value={tema}
             onChange={(e) => setTema(e.target.value)}
-            className="w-full p-3 rounded bg-[#1e1e1e] border border-principal mb-4"
+            className="w-full p-3 rounded bg-input border border-principal mb-4"
         >
             <option value="rosa">🌸 Rosa</option>
             <option value="azul">🔵 Azul</option>
             <option value="verde">🟢 Verde</option>
+        </select>
+
+        <label htmlFor="aparencia" className="block mb-2">Aparência:</label>
+        <select
+            id="aparencia"
+            value={temaClaro ? "claro" : "escuro"}
+            onChange={(e) => setTemaClaro(e.target.value === "claro")}
+            className="w-full p-3 rounded bg-input border border-principal mb-4"
+        >
+            <option value="escuro">🌙 Escuro</option>
+            <option value="claro">☀️ Claro</option>
         </select>
 
         <div className="flex gap-4">

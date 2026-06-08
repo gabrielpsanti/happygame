@@ -33,7 +33,8 @@ export default function Dashboard() {
 
     const [cores, setCores] = useState({
         principal: "#ff66b2",
-        secundaria: "#ff9ad3"
+        secundaria: "#ff9ad3",
+        texto: "#ffffff"
     });
 
     const [chartData, setChartData] = useState(null);
@@ -47,7 +48,8 @@ export default function Dashboard() {
 
         setCores({
             principal: styles.getPropertyValue("--cor-principal").trim(),
-            secundaria: styles.getPropertyValue("--cor-secundaria").trim()
+            secundaria: styles.getPropertyValue("--cor-secundaria").trim(),
+            texto: styles.getPropertyValue("--cor-texto").trim() || "#ffffff"
         });
     }
 
@@ -83,7 +85,14 @@ export default function Dashboard() {
         return () => observer.disconnect();
     }, []);
 
-    if (!chartData || !barData) return null;
+    if (!chartData || !barData) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-4" role="status">
+                <div className="spinner w-12 h-12" aria-hidden="true"></div>
+                <p>Carregando dados...</p>
+            </div>
+        );
+    }
 
     const labels   = chartData.map(item => item.mes);
     const usuarios = chartData.map(item => item.usuarios);
@@ -136,12 +145,13 @@ export default function Dashboard() {
 
     const sharedOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-            legend: { labels: { color: "white" } },
+            legend: { labels: { color: cores.texto } },
         },
         scales: {
-            x: { ticks: { color: "white" } },
-            y: { ticks: { color: "white" } }
+            x: { ticks: { color: cores.texto } },
+            y: { ticks: { color: cores.texto } }
         }
     };
 
@@ -152,7 +162,7 @@ export default function Dashboard() {
             title: {
                 display: true,
                 text: "Análise Preditiva de Crescimento de Usuários",
-                color: "white"
+                color: cores.texto
             }
         }
     };
@@ -164,17 +174,17 @@ export default function Dashboard() {
             title: {
                 display: true,
                 text: "Engajamento Mensal (sessões simuladas)",
-                color: "white"
+                color: cores.texto
             }
         }
     };
 
     return (
-        <div className="bg-card p-6 rounded-xl w-[80%] mx-auto mt-10">
+        <div className="bg-card p-4 md:p-6 rounded-xl w-full md:w-[80%] mx-auto mt-10">
             <Head><title>Dashboard | HappyGame</title></Head>
 
             {/* A2 — Cards de métricas */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 {metricas.map(({ titulo, valor, unidade }) => (
                     <div key={titulo} className="bg-card border border-principal rounded-xl p-4">
                         <p className="text-sm text-gray-400 mb-1">{titulo}</p>
@@ -192,10 +202,12 @@ export default function Dashboard() {
             </p>
 
             {/* A1 — Gráfico de linhas (existente) */}
-            <Line data={lineData} options={lineOptions} />
+            <div className="relative h-64 md:h-80">
+                <Line data={lineData} options={lineOptions} />
+            </div>
 
             {/* A1 — Gráfico de barras (engajamento) */}
-            <div className="mt-8">
+            <div className="relative h-64 md:h-80 mt-8">
                 <Bar data={barChartData} options={barOptions} />
             </div>
 
@@ -215,7 +227,7 @@ export default function Dashboard() {
                         {labels.map((mes, i) => {
                             const variacao = usuarios[i] - tendencia[i];
                             return (
-                                <tr key={mes} className={i % 2 !== 0 ? "bg-[#333]" : ""}>
+                                <tr key={mes} className={i % 2 !== 0 ? "bg-[var(--cor-card-hover)]" : ""}>
                                     <td className="px-4 py-2">{mes}</td>
                                     <td className="px-4 py-2">{usuarios[i]}</td>
                                     <td className="px-4 py-2">{tendencia[i]}</td>

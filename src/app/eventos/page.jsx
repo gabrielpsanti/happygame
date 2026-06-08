@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Head from 'next/head';
+import { useToast } from "@/components/ToastProvider";
+import EmptyState from "@/components/EmptyState";
 
 export default function Eventos() {
     const [nome, setNome] = useState("");
     const [data, setData] = useState("");
     const [hora, setHora] = useState("");
     const [eventos, setEventos] = useState([]);
+    const { addToast } = useToast();
 
     useEffect(() => {
     const salvos = JSON.parse(localStorage.getItem("eventos")) || [];
@@ -16,7 +19,7 @@ export default function Eventos() {
 
     function criarEvento() {
     if (!nome || !data || !hora) {
-        alert("Preencha NOME, DATA e HORA para criar o evento!");
+        addToast({ tipo: "erro", mensagem: "Preencha NOME, DATA e HORA para criar o evento!" });
         return;
     }
 
@@ -35,6 +38,8 @@ export default function Eventos() {
     setNome("");
     setData("");
     setHora("");
+
+    addToast({ tipo: "sucesso", mensagem: "Evento criado!" });
     }
 
     function apagarEvento(id) {
@@ -47,7 +52,7 @@ export default function Eventos() {
     <>
     <Head><title>Eventos | HappyGame</title></Head>
     <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Eventos</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-6">Eventos</h1>
         <div className="bg-card p-6 rounded-xl border border-principal mb-8">
         <h2 className="text-2xl font-bold mb-4 text-principal">
             Criar Evento
@@ -60,7 +65,7 @@ export default function Eventos() {
             placeholder="Nome do evento"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="w-full mb-3 p-3 rounded bg-[#1e1e1e] border border-principal"
+            className="w-full mb-3 p-3 rounded bg-input border border-principal"
         />
 
         <label htmlFor="data-evento" className="block mb-2">Data</label>
@@ -69,7 +74,7 @@ export default function Eventos() {
             type="date"
             value={data}
             onChange={(e) => setData(e.target.value)}
-            className="w-full mb-3 p-3 rounded bg-[#1e1e1e] border border-principal"
+            className="w-full mb-3 p-3 rounded bg-input border border-principal"
         />
 
         <label htmlFor="hora-evento" className="block mb-2">Hora</label>
@@ -78,7 +83,7 @@ export default function Eventos() {
             type="time"
             value={hora}
             onChange={(e) => setHora(e.target.value)}
-            className="w-full mb-4 p-3 rounded bg-[#1e1e1e] border border-principal"
+            className="w-full mb-4 p-3 rounded bg-input border border-principal"
         />
 
         <button
@@ -90,6 +95,13 @@ export default function Eventos() {
         </div>
 
         <div className="space-y-4">
+        {eventos.length === 0 && (
+          <EmptyState
+            icone="📅"
+            titulo="Nenhum evento cadastrado"
+            mensagem="Crie seu primeiro evento usando o formulário acima."
+          />
+        )}
         {eventos.map((evento) => (
             <div
             key={evento.id}

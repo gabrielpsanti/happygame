@@ -7,7 +7,7 @@ export default function SaibaMais() {
     <Head><title>Saiba Mais | HappyGame</title></Head>
     <div className="bg-card p-8 rounded-xl border border-principal max-w-3xl mx-auto shadow-xl">
 
-        <h1 className="text-3xl font-bold mb-4 text-principal">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-principal">
         Sobre o HappyGame
         </h1>
 

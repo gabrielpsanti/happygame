@@ -27,8 +27,8 @@ export default function Perfil() {
     return (
     <>
     <Head><title>Perfil | HappyGame</title></Head>
-    <h1 className="text-3xl font-bold mb-4">Perfil</h1>
-    <div className="bg-[#2a2a2a] max-w-2xl mx-auto p-10 rounded-2xl shadow-xl border-l-4 border-principal text-center">
+    <h1 className="text-2xl md:text-3xl font-bold mb-4">Perfil</h1>
+    <div className="bg-card max-w-2xl mx-auto p-10 rounded-2xl shadow-xl border-l-4 border-principal text-center">
 
         <div className="flex justify-center mb-6">
         <div className="relative">
